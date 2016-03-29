@@ -68,7 +68,7 @@ const Router = React.createClass({
       '`parseQueryString` and `stringifyQuery` are deprecated. Please create a custom history. http://tiny.cc/router-customquerystring'
     )
 
-    const { history, transitionManager, router } = this.createRouterObjects()
+    const { history, transitionManager, router, allRoutes } = this.createRouterObjects()
 
     this._unlisten = transitionManager.listen((error, state) => {
       if (error) {
@@ -78,6 +78,7 @@ const Router = React.createClass({
       }
     })
 
+    this.allRoutes = allRoutes
     this.history = history
     this.router = router
   },
@@ -95,13 +96,14 @@ const Router = React.createClass({
       history = this.wrapDeprecatedHistory(history)
     }
 
+    const allRoutes = createRoutes(routes || children)
     const transitionManager = createTransitionManager(
-      history, createRoutes(routes || children)
+      history, allRoutes
     )
     const router = createRouterObject(history, transitionManager)
     const routingHistory = createRoutingHistory(history, transitionManager)
 
-    return { history: routingHistory, transitionManager, router }
+    return { history: routingHistory, transitionManager, router, allRoutes}
   },
 
   wrapDeprecatedHistory(history) {
@@ -157,6 +159,7 @@ const Router = React.createClass({
       router: this.router,
       location,
       routes,
+      allRoutes: this.allRoutes,
       params,
       components,
       createElement

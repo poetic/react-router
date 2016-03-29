@@ -60,60 +60,61 @@ const RouterContext = React.createClass({
   },
 
   render() {
-    const { history, location, routes, params, components } = this.props
-    let element = null
+    const { history, location, routes, allRoutes, params, components } = this.props
 
-    if (components) {
-      element = components.reduceRight((element, components, index) => {
-        if (components == null)
-          return element // Don't create new children; use the grandchildren.
+    const allElements = getAllElements(allRoutes, location.pathname)
 
-        const route = routes[index]
-        const routeParams = getRouteParams(route, params)
-        const props = {
+    function getAllElements (route, path, props = {}) {
+      if (route === null) {
+        return route
+      }
+
+      if (Array.isArray(route)) {
+        return route.map(function (route) {
+          return getAllElements(route, path, {key: route.path})
+        })
+      }
+
+      if (route.component) {
+        const isActive = path.indexOf(route.path) === 0
+        const pathLeft = isActive ? path.substr(route.path.length) : path
+
+        props = Object.assign({
+          isActive,
           history,
           location,
           params,
           route,
-          routeParams,
+          routeParams: getRouteParams(route, params),
           routes
+        }, props)
+
+        const children = route.childRoutes &&
+          route.childRoutes.length &&
+          getAllElements(route.childRoutes, pathLeft)
+
+        if (children) {
+          props.children = children
         }
 
-        if (isReactChildren(element)) {
-          props.children = element
-        } else if (element) {
-          for (const prop in element)
-            if (Object.prototype.hasOwnProperty.call(element, prop))
-              props[prop] = element[prop]
-        }
+        return React.createElement(
+          route.component,
+          props
+        )
+      }
 
-        if (typeof components === 'object') {
-          const elements = {}
-
-          for (const key in components) {
-            if (Object.prototype.hasOwnProperty.call(components, key)) {
-              // Pass through the key as a prop to createElement to allow
-              // custom createElement functions to know which named component
-              // they're rendering, for e.g. matching up to fetched data.
-              elements[key] = this.createElement(components[key], {
-                key, ...props
-              })
-            }
-          }
-
-          return elements
-        }
-
-        return this.createElement(components, props)
-      }, element)
+      throw new Error('route is not null and it does not have a component: ', route)
     }
 
-    invariant(
-      element === null || element === false || React.isValidElement(element),
-      'The root route must render a single element'
-    )
-
-    return element
+    if (Array.isArray(allElements)) {
+      if (allElements.length === 1) {
+        return allElements[0]
+      } else {
+        return this.createElement('div', {children: allElements})
+      }
+    } else {
+      return allElements
+    }
   }
 
 })

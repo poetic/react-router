@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { browserHistory, Router, Route, IndexRoute, Link } from 'react-router'
 import './app.css'
 
@@ -13,16 +12,9 @@ class App extends React.Component {
           <li><Link to="/page2">Page 2</Link></li>
         </ul>
 
-        <ReactCSSTransitionGroup
-          component="div"
-          transitionName="example"
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={500}
-        >
-          {React.cloneElement(this.props.children, {
-            key: this.props.location.pathname
-          })}
-        </ReactCSSTransitionGroup>
+        <div>
+          {this.props.children}
+        </div>
 
       </div>
     )
@@ -44,7 +36,8 @@ class Index extends React.Component {
 class Page1 extends React.Component {
   render() {
     return (
-      <div className="Image">
+      <div className="Image" style={{transition: 'opacity 1s, width 2s, height 2s, background-color 2s, transform 2s', opacity: this.props.isActive ? 1 : 0}}>
+
         <h1>Page 1</h1>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       </div>
@@ -55,7 +48,7 @@ class Page1 extends React.Component {
 class Page2 extends React.Component {
   render() {
     return (
-      <div className="Image">
+      <div className="Image" style={{transition: 'opacity 1s, width 2s, height 2s, background-color 2s, transform 2s', opacity: this.props.isActive ? 1 : 0}}>
         <h1>Page 2</h1>
         <p>Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
       </div>
