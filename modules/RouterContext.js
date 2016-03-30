@@ -70,22 +70,21 @@ const RouterContext = React.createClass({
       components
     } = this.props
 
-    const allElements = getAllElements(allRoutes, location.pathname)
+    const allElements = getAllElements(allRoutes)
 
-    function getAllElements (route, path, props = {}) {
+    function getAllElements (route, props = {}) {
       if (route === null) {
         return route
       }
 
       if (Array.isArray(route)) {
         return route.map(function (route) {
-          return getAllElements(route, path, {key: route.path})
+          return getAllElements(route, {key: route.path})
         })
       }
 
       if (route.component) {
-        const isActive = path.indexOf(route.path) === 0
-        const pathLeft = isActive ? path.substr(route.path.length) : path
+        const isActive = routes.indexOf(route) > -1
 
         props = Object.assign({
           isActive,
@@ -100,7 +99,7 @@ const RouterContext = React.createClass({
 
         const children = route.childRoutes &&
           route.childRoutes.length &&
-          getAllElements(route.childRoutes, pathLeft)
+          getAllElements(route.childRoutes)
 
         if (children) {
           props.children = children
