@@ -35,6 +35,7 @@ class Index extends React.Component {
 
 class Page1 extends React.Component {
   render() {
+    console.log('this.props.previousLocation: ', this.props.previousLocation)
     return (
       <div className="Image" style={{transition: 'opacity 1s, width 2s, height 2s, background-color 2s, transform 2s', opacity: this.props.isActive ? 1 : 0}}>
 

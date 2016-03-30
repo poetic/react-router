@@ -46,6 +46,7 @@ const Router = React.createClass({
   getInitialState() {
     return {
       location: null,
+      previousLocation: null,
       routes: null,
       params: null,
       components: null
@@ -143,7 +144,7 @@ const Router = React.createClass({
   },
 
   render() {
-    const { location, routes, params, components } = this.state
+    const { previousLocation, location, routes, params, components } = this.state
     const { createElement, render, ...props } = this.props
 
     if (location == null)
@@ -157,6 +158,7 @@ const Router = React.createClass({
       ...props,
       history: this.history,
       router: this.router,
+      previousLocation,
       location,
       routes,
       allRoutes: this.allRoutes,

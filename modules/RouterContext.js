@@ -60,7 +60,15 @@ const RouterContext = React.createClass({
   },
 
   render() {
-    const { history, location, routes, allRoutes, params, components } = this.props
+    const {
+      history,
+      previousLocation,
+      location,
+      routes,
+      allRoutes,
+      params,
+      components
+    } = this.props
 
     const allElements = getAllElements(allRoutes, location.pathname)
 
@@ -82,6 +90,7 @@ const RouterContext = React.createClass({
         props = Object.assign({
           isActive,
           history,
+          previousLocation,
           location,
           params,
           route,

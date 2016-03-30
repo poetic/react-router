@@ -252,6 +252,15 @@ export default function createTransitionManager(history, routes) {
     }
   }
 
+  const updatePreviousLocation = (function() {
+    let previousLocation = null
+
+    return function (state, currentLocation) {
+      state.previousLocation = previousLocation && Object.assign({}, previousLocation)
+      previousLocation = Object.assign({}, currentLocation)
+    }
+  })()
+
   /**
    * This is the API for stateful environments. As the location
    * changes, we update state and call the listener. We can also
@@ -262,6 +271,7 @@ export default function createTransitionManager(history, routes) {
     // end up with multiple concurrent calls to match.
     return history.listen(function (location) {
       if (state.location === location) {
+        updatePreviousLocation(state, location)
         listener(null, state)
       } else {
         match(location, function (error, redirectLocation, nextState) {
@@ -270,6 +280,7 @@ export default function createTransitionManager(history, routes) {
           } else if (redirectLocation) {
             history.transitionTo(redirectLocation)
           } else if (nextState) {
+            updatePreviousLocation(nextState, nextState.location)
             listener(null, nextState)
           } else {
             warning(
